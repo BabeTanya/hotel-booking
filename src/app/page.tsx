@@ -1,6 +1,11 @@
-import HotelCatalog from '@/components/HotelCatalog';
-import Image from 'next/image'
+import Banner from '@/components/Banner'
+import { PromoteCard } from '@/components/PromoteCard'
 
 export default function Home() {
-  return (<>HOME <HotelCatalog/></>)
+  return (
+    <main>
+      <Banner />
+      <PromoteCard />
+    </main>
+  )
 }
