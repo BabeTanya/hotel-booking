@@ -1,30 +1,31 @@
 "use client"
-import createHotel from "@/libs/createHotel";
+import updateHotel from "@/libs/updateHotel";
 import { TextField } from "@mui/material";
 import { useSession } from "next-auth/react";
 import { FormEvent, useState } from "react";
 
-export default function AddHotelForm({ token }: { token: string }) {
-  const [name, setName] = useState<string>();
-  const [address, setAddress] = useState<string>();
-  const [district, setDistrict] = useState<string>();
-  const [province, setProvince] = useState<string>();
-  const [postalcode, setPostalCode] = useState<string>();
-  const [tel, setTel] = useState<string>();
-  const [picture, setPicture] = useState<string>();
+export default function EditHotelForm({ hotelData, token }: { hotelData: any, token: string }) {
+  const [name, setName] = useState<string>(hotelData.name);
+  const [address, setAddress] = useState<string>(hotelData.address);
+  const [district, setDistrict] = useState<string>(hotelData.district);
+  const [province, setProvince] = useState<string>(hotelData.province);
+  const [postalcode, setPostalCode] = useState<string>(hotelData.postalcode);
+  const [tel, setTel] = useState<string>(hotelData.tel);
+  const [picture, setPicture] = useState<string>(hotelData.picture);
 
   const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     if (name && address && district && province && postalcode && tel && picture) {
-      await createHotel(name, address, district, province, postalcode, tel, picture, token)
-      alert('Successfully add hotel')
-      setName('')
-      setAddress('')
-      setDistrict('')
-      setProvince('')
-      setPostalCode('')
-      setTel('')
-      setPicture('')
+      const response = await updateHotel(hotelData.id, name, address, district, province, postalcode, tel, picture, token)
+      const updatedHotel = response.data;
+      alert('Successfully updated hotel')
+      setName(updatedHotel.name)
+      setAddress(updatedHotel.address)
+      setDistrict(updatedHotel.district)
+      setProvince(updatedHotel.province)
+      setPostalCode(updatedHotel.postalcode)
+      setTel(updatedHotel.tel)
+      setPicture(updatedHotel.picture)
     } else {
       alert("Error, please specify all fields")
     }
@@ -32,8 +33,9 @@ export default function AddHotelForm({ token }: { token: string }) {
 
   return (
     <>
-      <div className="font-bold text-center mt-20">Create Hotel</div>
-      <form className="w-[90%] lg:w-[60%] mx-auto" onSubmit={onSubmit}>
+      <div>
+      <div className="font-bold text-center ">Edit Hotel</div>
+      <form className="w-[90%] mx-auto" onSubmit={onSubmit}>
         <div className="mt-4">Name</div>
         <TextField id="name" label="" variant="outlined" fullWidth value={name} onChange={(e) => setName(e.target.value)} />
 
@@ -60,6 +62,7 @@ export default function AddHotelForm({ token }: { token: string }) {
           <button className="bg-blue-600 p-4 w-[200px] rounded mx-auto text-white">Submit</button>
         </div>
       </form>
+      </div>
     </>
   )
 }

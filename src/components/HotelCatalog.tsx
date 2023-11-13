@@ -1,6 +1,7 @@
 import getHotels from "@/libs/getHotels"
 import { HotelCard } from "./HotelCard"
 import Link from "next/link"
+import { Hotel } from "../../interfaces"
 
 export default async function HotelCatalog() {
   const hotels = await getHotels()

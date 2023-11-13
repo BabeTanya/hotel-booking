@@ -5,6 +5,9 @@ import TopMenu from '@/components/TopMenu'
 import NextAuthProvider from '@/providers/NextAuthProvider'
 import { getServerSession } from 'next-auth'
 import { authOptions } from './api/auth/[...nextauth]/route'
+import ReduxProvider from '@/redux/ReduxProvider'
+import { LocalizationProvider } from '@mui/x-date-pickers'
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,12 +26,14 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <TopMenu />
-        <NextAuthProvider session={undefined}>
-          <div className="">
-            {children}
-          </div>
-        </NextAuthProvider>
+        <ReduxProvider>
+          <NextAuthProvider session={nextAuthSession}>
+          <TopMenu />
+            <div className="">
+              {children}
+            </div>
+          </NextAuthProvider>
+        </ReduxProvider>
       </body>
     </html>
   )

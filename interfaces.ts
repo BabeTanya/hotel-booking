@@ -1,4 +1,4 @@
-interface Hotel {
+export interface Hotel {
   id: string;
   name: string;
   address: string;
@@ -7,4 +7,10 @@ interface Hotel {
   postalcode: string;
   tel: string;
   picture: string;
+}
+
+export interface BookingItem {
+  bookingDate: string;
+  checkoutDate: string;
+  hotelId: string;
 }

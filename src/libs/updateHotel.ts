@@ -1,0 +1,33 @@
+export default async function updateHotel(
+    id: string,
+    name: string, 
+    address: string,
+    district: string, 
+    province: string, 
+    postalcode: string,
+    tel: string,
+    picture: string,
+    token: string,
+  ) {
+    const data = {
+      name,
+      address,
+      district,
+      province,
+      postalcode,
+      tel,
+      picture,
+    }
+    const response = await fetch(`http://localhost:5000/api/v1/hotels/${id}`, {
+      method: 'PUT',
+      headers: {
+        "Content-Type": "application/json",
+        authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(data),
+    })
+    if (!response.ok) {
+      throw new Error('Failed to update hotel')
+    }
+    return await response.json();
+  }

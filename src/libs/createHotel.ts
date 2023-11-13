@@ -26,7 +26,7 @@ export default async function createHotel(
     body: JSON.stringify(data),
   })
   if (!response.ok) {
-    throw new Error('Failed to create user')
+    throw new Error('Failed to create hotel')
   }
   return await response.json();
 }
