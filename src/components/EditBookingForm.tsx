@@ -1,48 +1,32 @@
 'use client'
-import registerUser from '@/libs/registerUser';
 import { FormEvent, useDeferredValue, useEffect, useState } from 'react';
 import { useRouter } from "next/navigation";
-import { MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
-import getHotels from '@/libs/getHotels';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { BookingItem, Hotel } from '../../interfaces';
+import { BookingItem, BookingResponse, Hotel } from '../../interfaces';
 import { useDispatch } from 'react-redux';
 import { AppDispatch, useAppSelector  } from '@/redux/store';
 import { useSession } from 'next-auth/react';
-import { addBooking, removeBooking } from '@/redux/features/cartSlice';
 import dayjs from 'dayjs';
-import createBooking from '@/libs/createBooking';
+import updateBooking from '@/libs/updateBooking';
 
-export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
+export default function EditBookingForm({ booking, isAdmin }: { booking: BookingResponse, isAdmin: boolean }) {
   const router = useRouter()
-  const bookingItem = useAppSelector((state) => state.cartSlice.bookingItem)
 
-  const [hotelId, setHotelId] = useState<string>(bookingItem?.hotelId || '');
-  const [bookingDate, setBookingDate] = useState<any>(dayjs(bookingItem?.bookingDate));
-  const [checkoutDate, setCheckoutDate] = useState<any>(dayjs(bookingItem?.checkoutDate));
+  const [bookingDate, setBookingDate] = useState<any>(dayjs(booking?.bookingDate) || dayjs().format('YYYY/MM/DD'));
+  const [checkoutDate, setCheckoutDate] = useState<any>(dayjs(booking?.checkoutDate) || dayjs().format('YYYY/MM/DD'));
+  
   const { data: session } = useSession();
   const dispatch = useDispatch<AppDispatch>()
   const [inClient, setInClient] = useState(false)
-  
   useEffect(() => {
     setInClient(true);
   }, [])
   
 
-  const handleHotelChange = (event: SelectChangeEvent<string>) => {
-    console.log('handleHotelChange e', event.target.value)
-    setHotelId(event.target.value);
-  };
-
   const submitForm = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault()
-    if (bookingDate && checkoutDate && hotelId) {
-      const bookingItem: BookingItem = {
-        bookingDate: dayjs(bookingDate).format('YYYY/MM/DD'),
-        checkoutDate: dayjs(checkoutDate).format('YYYY/MM/DD'),
-        hotelId,
-      }
+    if (bookingDate && checkoutDate) {
       const durationDay = dayjs(checkoutDate).diff(dayjs(bookingDate), 'day')
       if (durationDay <= 0) {
         alert('Cannot checkout before or equal booking date')
@@ -50,17 +34,15 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
         alert('Can book maximum 3 nights')
       } else {
         if (session) {
-          await createBooking(
-            hotelId,
-            bookingItem.bookingDate,
-            bookingItem.checkoutDate,
+          await updateBooking(
+            booking._id,
+            dayjs(bookingDate).format('YYYY/MM/DD'),
+            dayjs(checkoutDate).format('YYYY/MM/DD'),
             dayjs().format('YYYY/MM/DD'),
             session.user?.token
           )
-          alert('Create booking successfully!')
-          dispatch(removeBooking())
+          alert('Update booking successfully!')
         } else {
-          dispatch(addBooking(bookingItem))
           alert('Your booking temporary save, Please register/signin before submit')
         }
       }
@@ -71,7 +53,7 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
 
   return (
     <>
-      <div className="font-bold text-center">Create Booking</div>
+      <div className="font-bold text-center">Edit Booking</div>
       <form className="w-[90%] lg:w-[60%] mx-auto" onSubmit={submitForm}>
           <div className='flex w-full gap-x-4'>
             <div className='w-full'>
@@ -99,20 +81,18 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
           </div>
 
         <div className="mt-4">Hotel</div>
-        {inClient &&<Select
-          labelId="demo-simple-select-label"
-          id="demo-simple-select"
-          value={hotelId}
-          label="Hotel"
-          onChange={handleHotelChange}
-          fullWidth
-        >
-           {hotels.map((hotel) => <MenuItem key={hotel.id} value={hotel.id}>{hotel.name}</MenuItem>)}
-        </Select>}
+        <div className='text-md font-semibold'>{booking.hotel?.name}</div>
+
+        {isAdmin && (
+          <>
+            <div className="mt-4">Customer</div>
+            <div className='text-md font-semibold'>{booking.user?.name}</div>
+          </>
+        )}
 
         <div className="flex items-center my-2 mt-8">
           {/* <label className="w-36 block text-gray-700 pr-4"></label> */}
-          <button className="bg-blue-600 p-4 w-[200px] rounded mx-auto text-white">Submit</button>
+          <button className="bg-blue-600 p-4 w-[200px] rounded mx-auto text-white">Update</button>
         </div>
       </form>
     </>

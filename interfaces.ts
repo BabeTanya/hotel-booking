@@ -14,3 +14,23 @@ export interface BookingItem {
   checkoutDate: string;
   hotelId: string;
 }
+
+export interface BookingResponse {
+  _id: string;
+  bookingDate: string;
+  checkoutDate: string;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+    tel: string;
+  },
+  hotel: {
+    _id: string;
+    name: string;
+    address: string;
+    tel: string;
+    id: string;
+  }
+  createdAt: string;
+}

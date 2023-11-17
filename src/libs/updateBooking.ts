@@ -1,4 +1,4 @@
-export default async function createBooking(
+export default async function updateBooking(
   hotelId: string,
   bookingDate: string, 
   checkoutDate: string,
@@ -10,8 +10,8 @@ export default async function createBooking(
     checkoutDate,
     createAt,
   }
-  const response = await fetch(`http://localhost:5000/api/v1/hotels/${hotelId}/bookings`, {
-    method: 'POST',
+  const response = await fetch(`http://localhost:5000/api/v1/bookings/${hotelId}`, {
+    method: 'PUT',
     headers: {
       "Content-Type": "application/json",
       authorization: `Bearer ${token}`,
