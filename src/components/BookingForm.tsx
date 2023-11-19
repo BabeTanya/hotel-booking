@@ -1,9 +1,6 @@
 'use client'
-import registerUser from '@/libs/registerUser';
-import { FormEvent, useDeferredValue, useEffect, useState } from 'react';
-import { useRouter } from "next/navigation";
-import { MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
-import getHotels from '@/libs/getHotels';
+import { FormEvent, useEffect, useState } from 'react';
+import { MenuItem, Select, SelectChangeEvent } from '@mui/material';
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { BookingItem, Hotel } from '../../interfaces';
@@ -13,6 +10,7 @@ import { useSession } from 'next-auth/react';
 import { addBooking, removeBooking } from '@/redux/features/cartSlice';
 import dayjs from 'dayjs';
 import createBooking from '@/libs/createBooking';
+import { sendEmail } from '@/libs/sendEmail';
 
 export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
   const bookingItemStorage = useAppSelector((state) => state.cartSlice.bookingItem)
@@ -24,6 +22,8 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
     bookingItemStorage?.checkoutDate ? dayjs(bookingItemStorage?.checkoutDate) : null
   );
   const [hotelId, setHotelId] = useState<string>(bookingItemStorage?.hotelId || '');
+  const [hotelName, setHotelName] = useState<string>('');
+
   const { data: session } = useSession();
   const dispatch = useDispatch<AppDispatch>()
   const [inClient, setInClient] = useState(false)
@@ -34,8 +34,9 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
   
 
   const handleHotelChange = (event: SelectChangeEvent<string>) => {
-    console.log('handleHotelChange e', event.target.value)
     setHotelId(event.target.value);
+    const selectHotel = hotels.find((hotel) => hotel.id === event.target.value)
+    setHotelName(selectHotel?.name!);
   };
 
   const submitForm = async (event: FormEvent<HTMLFormElement>) => {
@@ -53,14 +54,22 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
         alert('Can book maximum 3 nights')
       } else {
         if (session) {
-          await createBooking(
+          const bookingResponse = await createBooking(
             hotelId,
             bookingItem.bookingDate,
             bookingItem.checkoutDate,
             dayjs().format('YYYY/MM/DD'),
             session.user?.token
           )
-          alert('Create booking successfully!')
+          alert('Create booking successfully! Confirmation email will be sent shortly')
+          sendEmail({
+            to: session?.user.email,
+            hotelName: hotelName,
+            customerName: session.user?.name,
+            bookingDate: bookingItem.bookingDate,
+            checkoutDate: bookingItem.checkoutDate,
+            bookingId: bookingResponse.data._id
+          })
           dispatch(removeBooking())
           setBookingDate('')
           setCheckoutDate('')
@@ -82,30 +91,30 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
           <div className='flex w-full gap-x-4'>
             <div className='w-full'>
               <div className="mt-6">Booking Date</div>
-              {inClient && <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   className="bg-white w-full"
                   value={bookingDate}
                   onChange={(value) => setBookingDate(value)}
                   format='YYYY/MM/DD'
                 />
-              </LocalizationProvider>}
+              </LocalizationProvider>
             </div>
             <div className='w-full'>
               <div className="mt-6">Checkout Date</div>
-              {inClient && <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   className="bg-white w-full"
                   value={checkoutDate}
                   onChange={(value) => setCheckoutDate(value)}
                   format='YYYY/MM/DD'
                 />
-              </LocalizationProvider>}
+              </LocalizationProvider>
             </div>
           </div>
 
         <div className="mt-4">Hotel</div>
-        {inClient &&<Select
+        <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={hotelId}
@@ -114,7 +123,7 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
           fullWidth
         >
            {hotels.map((hotel) => <MenuItem key={hotel.id} value={hotel.id}>{hotel.name}</MenuItem>)}
-        </Select>}
+        </Select>
 
         <div className="flex items-center my-2 mt-8">
           {/* <label className="w-36 block text-gray-700 pr-4"></label> */}
