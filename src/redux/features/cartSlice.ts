@@ -9,7 +9,7 @@ const initialState: CartState = { bookingItem: null }
 
 export const cartSlice = createSlice({
   name: "cart",
-  initialState,
+  initialState: initialState,
   reducers: {
     addBooking: (state, action: PayloadAction<BookingItem>) => {
       state.bookingItem = action.payload

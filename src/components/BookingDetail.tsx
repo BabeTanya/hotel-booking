@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 export default function BookingDetail({ booking, isAdmin }: { booking: BookingResponse, isAdmin: boolean }) {
-  const router = useRouter()
+  
   const { data: session } = useSession()
   const handleCancelBooking = async () => {
     if (window.confirm('Are you sure you wish to delete this item?') && session) {

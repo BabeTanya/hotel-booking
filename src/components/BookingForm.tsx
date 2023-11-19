@@ -15,12 +15,15 @@ import dayjs from 'dayjs';
 import createBooking from '@/libs/createBooking';
 
 export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
-  const router = useRouter()
-  const bookingItem = useAppSelector((state) => state.cartSlice.bookingItem)
+  const bookingItemStorage = useAppSelector((state) => state.cartSlice.bookingItem)
 
-  const [hotelId, setHotelId] = useState<string>(bookingItem?.hotelId || '');
-  const [bookingDate, setBookingDate] = useState<any>(dayjs(bookingItem?.bookingDate));
-  const [checkoutDate, setCheckoutDate] = useState<any>(dayjs(bookingItem?.checkoutDate));
+  const [bookingDate, setBookingDate] = useState<any>(
+    bookingItemStorage?.bookingDate ? dayjs(bookingItemStorage?.bookingDate) : null
+  );
+  const [checkoutDate, setCheckoutDate] = useState<any>(
+    bookingItemStorage?.checkoutDate ? dayjs(bookingItemStorage?.checkoutDate) : null
+  );
+  const [hotelId, setHotelId] = useState<string>(bookingItemStorage?.hotelId || '');
   const { data: session } = useSession();
   const dispatch = useDispatch<AppDispatch>()
   const [inClient, setInClient] = useState(false)
@@ -59,6 +62,9 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
           )
           alert('Create booking successfully!')
           dispatch(removeBooking())
+          setBookingDate('')
+          setCheckoutDate('')
+          setHotelId('')
         } else {
           dispatch(addBooking(bookingItem))
           alert('Your booking temporary save, Please register/signin before submit')

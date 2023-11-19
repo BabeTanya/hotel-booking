@@ -1,28 +1,7 @@
-import getHotels from "@/libs/getHotels"
-import { HotelCard } from "./HotelCard"
-import Link from "next/link"
 import getHotel from "@/libs/getHotel";
 import Image from "next/image";
 import EditHotelForm from "./EditHotelForm";
-import deleteHotel from "@/libs/deleteHotel";
 import DeleteHotelForm from "./DeleteHotelForm";
-
-function Detail({ hotelData, isAdmin, token }: { hotelData: any, isAdmin: boolean, token: string }) {
-  if (isAdmin) {
-    return <EditHotelForm token={token} hotelData={hotelData}/>
-  }
-  return (
-    <div className="text-md mx-5 text-left">
-    <div className="mb-5 text-lg">{hotelData.name}</div>
-    <div>Address: {hotelData.address}</div>
-    <div>District: {hotelData.district}</div>
-    <div>Province: {hotelData.province}</div>
-    <div>Postcode: {hotelData.postalcode}</div>
-    <div>Tel: {hotelData.tel}</div>
-
-  </div>
-  )
-}
 
 export default async function HotelDetail({ id, isAdmin, token }: { id: string, isAdmin: boolean, token: string }) {
   const hotel = await getHotel(id);
@@ -43,4 +22,21 @@ export default async function HotelDetail({ id, isAdmin, token }: { id: string, 
       </div>
     </>
   );
+}
+
+function Detail({ hotelData, isAdmin, token }: { hotelData: any, isAdmin: boolean, token: string }) {
+  if (isAdmin) {
+    return <EditHotelForm token={token} hotelData={hotelData}/>
+  }
+  return (
+    <div className="text-md mx-5 text-left">
+    <div className="mb-5 text-lg">{hotelData.name}</div>
+    <div>Address: {hotelData.address}</div>
+    <div>District: {hotelData.district}</div>
+    <div>Province: {hotelData.province}</div>
+    <div>Postcode: {hotelData.postalcode}</div>
+    <div>Tel: {hotelData.tel}</div>
+
+  </div>
+  )
 }

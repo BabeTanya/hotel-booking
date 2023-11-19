@@ -5,7 +5,6 @@ import { useRouter } from "next/navigation";
 import { MenuItem, Select, SelectChangeEvent, TextField } from '@mui/material';
 
 export default function Signup() {
-  const router = useRouter()
   const [name, setName] = useState<string>();
   const [email, setEmail] = useState<string>();
   const [tel, setTel] = useState<string>();

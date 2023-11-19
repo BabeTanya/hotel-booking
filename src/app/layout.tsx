@@ -6,8 +6,6 @@ import NextAuthProvider from '@/providers/NextAuthProvider'
 import { getServerSession } from 'next-auth'
 import { authOptions } from './api/auth/[...nextauth]/route'
 import ReduxProvider from '@/redux/ReduxProvider'
-import { LocalizationProvider } from '@mui/x-date-pickers'
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 const inter = Inter({ subsets: ['latin'] })
 

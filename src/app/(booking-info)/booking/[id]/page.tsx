@@ -10,6 +10,7 @@ export default async function EditBooking({ params }: { params: { id: string }})
   const profile = session?.user ? await getUserProfile(session.user?.token) : null
   const isAdmin = profile.data?.role === 'admin';
   const booking = session?.user ? await getBooking(params.id, session.user?.token!) : null
+  console.log('booking', booking);
   return (
     <>
       <EditBookingForm booking={booking.data} isAdmin={isAdmin}/>

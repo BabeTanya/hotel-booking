@@ -6,7 +6,6 @@ import TopMenuItem from "./TopMenuItem";
 
 export default async function TopMenu() {
   const session = await getServerSession(authOptions);
-
   return (
     <>
       <div className="w-full h-[60px] border-y border-gray-200 px-2 sm:px-48">
