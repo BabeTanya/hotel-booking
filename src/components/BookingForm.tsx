@@ -91,30 +91,30 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
           <div className='flex w-full gap-x-4'>
             <div className='w-full'>
               <div className="mt-6">Booking Date</div>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {inClient && <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   className="bg-white w-full"
                   value={bookingDate}
                   onChange={(value) => setBookingDate(value)}
                   format='YYYY/MM/DD'
                 />
-              </LocalizationProvider>
+              </LocalizationProvider>}
             </div>
             <div className='w-full'>
               <div className="mt-6">Checkout Date</div>
-              <LocalizationProvider dateAdapter={AdapterDayjs}>
+              {inClient && <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   className="bg-white w-full"
                   value={checkoutDate}
                   onChange={(value) => setCheckoutDate(value)}
                   format='YYYY/MM/DD'
                 />
-              </LocalizationProvider>
+              </LocalizationProvider>}
             </div>
           </div>
 
         <div className="mt-4">Hotel</div>
-        <Select
+        {inClient && <Select
           labelId="demo-simple-select-label"
           id="demo-simple-select"
           value={hotelId}
@@ -123,7 +123,7 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
           fullWidth
         >
            {hotels.map((hotel) => <MenuItem key={hotel.id} value={hotel.id}>{hotel.name}</MenuItem>)}
-        </Select>
+        </Select>}
 
         <div className="flex items-center my-2 mt-8">
           {/* <label className="w-36 block text-gray-700 pr-4"></label> */}
