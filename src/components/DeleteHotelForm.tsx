@@ -8,7 +8,7 @@ export default function DeleteHotelForm({id, token }: { id: string, token: strin
     if (window.confirm('Are you sure you wish to delete this item?')) {
       await deleteHotel(id, token);
       alert('Successfully delete hotel')
-      router.push('/hotels')
+      window.location.href = '/hotels'
     }
   }
   
