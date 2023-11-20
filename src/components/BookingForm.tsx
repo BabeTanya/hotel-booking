@@ -48,7 +48,9 @@ export default function BookingForm({ hotels }: { hotels: Hotel[]}) {
         hotelId,
       }
       const durationDay = dayjs(checkoutDate).diff(dayjs(bookingDate), 'day')
-      if (durationDay <= 0) {
+      if (dayjs(bookingDate).isBefore(dayjs(), 'day')) {
+        alert('Booking date is before present day')
+      } else if (durationDay <= 0) {
         alert('Cannot checkout before or equal booking date')
       } else if (durationDay > 3) {
         alert('Can book maximum 3 nights')
